@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculateur de Macronutriments</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .btn {
+            display: block;
+            width: 200px;
+            margin: 10px auto;
+            padding: 10px;
+            border: none;
+            border-radius: 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .btn.femme {
+            background-color: #ff69b4;
+            color: white;
+        }
+
+        .btn.homme {
+            background-color: #1e90ff;
+            color: white;
+        }
+
+        .btn.suivant, .btn.resultat {
+            background-color: #32cd32;
+            color: white;
+        }
+
+        input, select {
+            display: block;
+            width: 200px;
+            margin: 10px auto;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .resultats {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .cercle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px;
+            font-size: 16px;
+            color: white;
+            flex-direction: column;
+        }
+
+        .cercle.vert {
+            background-color: #32cd32;
+        }
+
+        .cercle.bleu {
+            background-color: #1e90ff;
+        }
+
+        .cercle.orange {
+            background-color: #ffa500;
+            color: black;
+        }
+
+        .titre {
+            font-size: 12px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="page1">
+        <h1>Commence ton bilan gratuit pour ta prise de masse</h1>
+        <button class="btn femme">Je suis une femme</button>
+        <button class="btn homme">Je suis un homme</button>
+    </div>
+    <div id="page2" style="display: none;">
+        <h1>Ton bilan</h1>
+        <label for="age">Ton âge</label>
+        <input type="number" id="age">
+        <button class="btn suivant">Suivant</button>
+    </div>
+    <div id="page3" style="display: none;">
+        <h1>Ton poids</h1>
+        <label for="poids">Ton poids</label>
+        <input type="number" id="poids">
+        <button class="btn suivant">Suivant</button>
+    </div>
+    <div id="page4" style="display: none;">
+        <h1>Ta taille</h1>
+        <label for="taille">Ta taille (en cm)</label>
+        <input type="number" id="taille">
+        <button class="btn suivant">Suivant</button>
+    </div>
+    <div id="page5" style="display: none;">
+        <h1>Ton niveau d’activité physique</h1>
+        <label for="activite">Ton niveau d’activité physique</label>
+        <select id="activite">
+            <option value="1.2">Sédentaire</option>
+            <option value="1.375">Légèrement actif</option>
+            <option value="1.55">Modérément actif</option>
+            <option value="1.725">Très actif</option>
+            <option value="1.9">Extrêmement actif</option>
+        </select>
+        <button class="btn resultat">Continue vers tes résultats</button>
+    </div>
+    <div id="page6" style="display: none;">
+        <h1>Voici tes résultats</h1>
+        <div class="resultats">
+            <div class="cercle vert">
+                <div id="mb">MB</div>
+                <div class="titre">MB</div>
+            </div>
+            <div class="cercle vert">
+                <div id="maintien">Maintien</div>
+                <div class="titre">Maintien</div>
+            </div>
+        </div>
+        <div class="resultats">
+            <div class="cercle bleu">
+                <div id="prise-masse">Prise de masse</div>
+                <div class="titre">Prise de masse</div>
+            </div>
+            <div class="cercle orange">
+                <div id="proteines">Protéines</div>
+                <div class="titre">Protéines</div>
+            </div>
+            <div class="cercle orange">
+                <div id="glucides">Glucides</div>
+                <div class="titre">Glucides</div>
+            </div>
+            <div class="cercle orange">
+                <div id="lipides">Lipides</div>
+                <div class="titre">Lipides</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelector('.btn.femme').addEventListener('click', function() {
+            document.getElementById('page1').style.display = 'none';
+            document.getElementById('page2').style.display = 'block';
+        });
+
+        document.querySelector('.btn.homme').addEventListener('click', function() {
+            document.getElementById('page1').style.display = 'none';
+            document.getElementById('page2').style.display = 'block';
+        });
+
+        document.querySelectorAll('.btn.suivant').forEach(button => {
+            button.addEventListener('click', function() {
+                this.parentElement.style.display = 'none';
+                const nextPageId = 'page' + (parseInt(this.parentElement.id.slice(-1)) + 1);
+                document.getElementById(nextPageId).style.display = 'block';
+            });
+        });
+
+        document.querySelector('.btn.resultat').addEventListener('click', function() {
+            document.getElementById('page5').style.display = 'none';
+            document.getElementById('page6').style.display = 'block';
+            calculerResultats();
+        });
+
+        function calculerResultats() {
+            const age = document.getElementById('age').value;
+            const poids = document.getElementById('poids').value;
+            const taille = document.getElementById('taille').value;
+            const activite = document.getElementById('activite').value;
+            const genre = document.querySelector('.btn.femme').style.display === 'none' ? 'homme' : 'femme';
+
+            let mb;
+            if (genre === 'homme') {
+                mb = 88.362 + (13.397 * poids) + (4.799 * taille) - (5.677 * age);
+            } else {
+                mb = 447.593 + (9.247 * poids) + (3.098 * taille) - (4.330 * age);
+            }
+
+            const bej = mb * activite;
+            const priseMasse = bej + 300;
+            const proteines = 2 * poids;
+            const glucides = 5 * poids;
+            const lipides = 1 * poids;
+
+            document.getElementById('mb').innerText = Math.round(mb);
+            document.getElementById('maintien').innerText = Math.round(bej);
+            document.getElementById('prise-masse').innerText = Math.round(priseMasse);
+            document.getElementById('proteines').innerText = Math.round(proteines) + ' g';
+            document.getElementById('glucides').innerText = Math.round(glucides) + ' g';
+            document.getElementById('lipides').innerText = Math.round(lipides) + ' g';
+        }
+    </script>
+</body>
+</html>
